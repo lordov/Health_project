@@ -1,0 +1,11 @@
+# No .log files
+*.log
+
+# No settings files
+*.ini
+*.env
+
+# No pycache
+*__pycache__
+
+*rabbitmq_data

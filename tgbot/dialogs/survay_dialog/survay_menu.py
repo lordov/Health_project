@@ -1,0 +1,665 @@
+from aiogram.types import ContentType
+
+from aiogram_dialog import Dialog, Window
+from aiogram_dialog.widgets.kbd import (
+    Button, Row, Column,  Url,
+    Group, Back, Cancel,  Next
+)
+from aiogram_dialog.widgets.input import MessageInput
+from aiogram_dialog.widgets.text import Format, Const
+from aiogram_dialog.widgets.media import StaticMedia
+
+from tgbot.dialogs.states import Survay
+from tgbot.dialogs.survay_dialog.survay_callback import (
+    answer_assessment, answer_pain_scale, get_full_name,
+    get_phone, get_age, get_surgery_date,
+    answer_quest1, answer_quest2,
+    answer_quest3, answer_quest4,
+    answer_quest5, answer_quest6,
+    answer_quest7, answer_quest8,
+    answer_quest9, answer_quest10,
+    answer_quest11, answer_quest12,
+    answer_quest13, answer_quest14,
+    answer_imt_height, answer_imt_weight,
+)
+from tgbot.dialogs.getters import (
+    text_assesment, text_instruction,
+    pre_survay, imt,
+    survay_question1, survay_question2,
+    survay_question3, survay_question4,
+    survay_question5, survay_question6,
+    survay_question7, survay_question8,
+    survay_question9, survay_question10,
+    survay_question11, survay_question12,
+    survay_question13, survay_question14,
+    wash, self_assessment, get_result
+)
+
+
+survay_dialog = Dialog(
+    Window(
+        Format('{assessment}'),
+        Group(
+            Column(
+                Next(
+                    Format(text='{instruction_button}'),
+                    id='go_to_instruction',
+                ),
+                Column(
+                    Cancel(
+                        Const('◀️ Назад'),
+                        id='cncl_surv_dialog',
+                    ),
+                ),
+            ),
+        ),
+        getter=text_assesment,
+        state=Survay.start
+    ),
+    Window(
+        Format('{instruction}'),
+        Group(
+            Column(
+                Next(
+                    text=Format('{assessment_button}'),
+                    id='go_to_survay',
+                ),
+            ),
+            Column(
+                Back(
+                    Const('◀️ Назад'),
+                    id='back',
+                ),
+            ),
+        ),
+        getter=text_instruction,
+        state=Survay.instruction,
+    ),
+    Window(
+        Format('{full_name}'),
+        MessageInput(
+            func=get_full_name,
+            content_types=ContentType.TEXT
+        ),
+        Column(
+            Back(
+                Const('◀️ Назад'),
+                id='back',
+            ),
+        ),
+        getter=pre_survay,
+        state=Survay.full_name
+    ),
+    Window(
+        Format('{age}'),
+        MessageInput(
+            func=get_age,
+            content_types=ContentType.TEXT
+        ),
+        Column(
+            Back(
+                Const('◀️ Назад'),
+                id='back',
+            ),
+        ),
+        getter=pre_survay,
+        state=Survay.age
+    ),
+    Window(
+        Format('{phone}'),
+        MessageInput(
+            func=get_phone,
+            content_types=ContentType.TEXT
+        ),
+        Column(
+            Back(
+                Const('◀️ Назад'),
+                id='back',
+            ),
+        ),
+        getter=pre_survay,
+        state=Survay.phone
+    ),
+    Window(
+        Format('{surgery}'),
+        MessageInput(
+            func=get_surgery_date,
+            content_types=ContentType.TEXT
+        ),
+        Column(
+            Back(
+                Const('◀️ Назад'),
+                id='back',
+            ),
+        ),
+        getter=pre_survay,
+        state=Survay.surgery
+    ),
+    Window(
+        Format('{question1}'),
+        Group(
+            Column(
+                Button(
+                    Format(text='{quest1_btn1}'),
+                    id='a',
+                    on_click=answer_quest1
+                )
+            ),
+            Column(
+                Button(
+                    Format(text='{quest1_btn2}'),
+                    id='b',
+                    on_click=answer_quest1
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{quest1_btn3}'),
+                    id='c',
+                    on_click=answer_quest1
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{quest1_btn4}'),
+                    id='d',
+                    on_click=answer_quest1
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{quest1_btn5}'),
+                    id='e',
+                    on_click=answer_quest1
+                ),
+            ),
+            Column(
+                Back(
+                    Const('◀️ Назад'),
+                    id='back',
+                ),
+            ),
+        ),
+        state=Survay.question1,
+        getter=survay_question1
+    ),
+    Window(
+        Format('{question2}'),
+        Group(
+            Column(
+                Button(
+                    Format(text='{quest2_btn1}'),
+                    id='a',
+                    on_click=answer_quest2
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{quest2_btn2}'),
+                    id='b',
+                    on_click=answer_quest2
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{quest2_btn3}'),
+                    id='c',
+                    on_click=answer_quest2
+                ),
+            ),
+            Column(
+                Back(
+                    Const('◀️ Назад'),
+                    id='back',
+                ),
+            ),
+        ),
+        state=Survay.question2,
+        getter=survay_question2
+    ),
+    Window(
+        Format('{question3}'),
+        Group(
+            Row(
+                Button(
+                    Format(text='{btn_yes}'),
+                    id='a',
+                    on_click=answer_quest3
+                ),
+                Button(
+                    Format(text='{btn_no}'),
+                    id='b',
+                    on_click=answer_quest3
+                ),
+            ),
+            Column(
+                Back(
+                    Const('◀️ Назад'),
+                    id='back',
+                ),
+            ),
+        ),
+        state=Survay.question3,
+        getter=survay_question3
+    ),
+    Window(
+        Format('{question4}'),
+        Group(
+            Row(
+                Button(
+                    Format(text='{btn_yes}'),
+                    id='a',
+                    on_click=answer_quest4
+                ),
+                Button(
+                    Format(text='{btn_no}'),
+                    id='b',
+                    on_click=answer_quest4
+                ),
+            ),
+            Column(
+                Back(
+                    Const('◀️ Назад'),
+                    id='back',
+                ),
+            ),
+        ),
+        state=Survay.question4,
+        getter=survay_question4
+    ),
+    Window(
+        Format('{question5}'),
+        Group(
+            Column(
+                Button(
+                    Format(text='{quest5_btn1}'),
+                    id='a',
+                    on_click=answer_quest5
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{quest5_btn2}'),
+                    id='b',
+                    on_click=answer_quest5
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{quest5_btn3}'),
+                    id='c',
+                    on_click=answer_quest5
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{btn_no}'),
+                    id='d',
+                    on_click=answer_quest5
+                ),
+            ),
+            Column(
+                Back(
+                    Const('◀️ Назад'),
+                    id='back',
+                ),
+            ),
+        ),
+        state=Survay.question5,
+        getter=survay_question5
+    ),
+    Window(
+        Format('{question6}'),
+        Group(
+            Column(
+                Button(
+                    Format(text='{quest6_btn1}'),
+                    id='a',
+                    on_click=answer_quest6
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{quest6_btn2}'),
+                    id='b',
+                    on_click=answer_quest6
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{quest6_btn3}'),
+                    id='c',
+                    on_click=answer_quest6
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{quest6_btn4}'),
+                    id='d',
+                    on_click=answer_quest6
+                ),
+            ),
+            Column(
+                Back(
+                    Const('◀️ Назад'),
+                    id='back',
+                ),
+            ),
+        ),
+        state=Survay.question6,
+        getter=survay_question6
+    ),
+    Window(
+        Format('{question7}'),
+        Group(
+            Row(
+                Button(
+                    Format(text='{btn_yes}'),
+                    id='a',
+                    on_click=answer_quest7
+                ),
+                Button(
+                    Format(text='{btn_no}'),
+                    id='b',
+                    on_click=answer_quest7
+                ),
+            ),
+            Column(
+                Back(
+                    Const('◀️ Назад'),
+                    id='back',
+                ),
+            ),
+        ),
+        state=Survay.question7,
+        getter=survay_question7
+    ),
+    Window(
+        Format('{question8}'),
+        Group(
+            Column(
+                Button(
+                    Format(text='{quest8_btn1}'),
+                    id='a',
+                    on_click=answer_quest8
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{quest8_btn2}'),
+                    id='b',
+                    on_click=answer_quest8
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{quest8_btn3}'),
+                    id='c',
+                    on_click=answer_quest8
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{quest8_btn4}'),
+                    id='d',
+                    on_click=answer_quest8
+                ),
+            ),
+            Column(
+                Back(
+                    Const('◀️ Назад'),
+                    id='back',
+                ),
+            ),
+        ),
+        state=Survay.question8,
+        getter=survay_question8
+    ),
+    Window(
+        Format('{question9}'),
+        Group(
+            Column(
+                Button(
+                    Format(text='{quest9_btn1}'),
+                    id='a',
+                    on_click=answer_quest9
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{quest9_btn2}'),
+                    id='b',
+                    on_click=answer_quest9
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{quest9_btn3}'),
+                    id='c',
+                    on_click=answer_quest9
+                ),
+            ),
+            Column(
+                Button(
+                    Format(text='{quest9_btn4}'),
+                    id='d',
+                    on_click=answer_quest9
+                ),
+            ),
+            Column(
+                Back(
+                    Const('◀️ Назад'),
+                    id='back',
+                ),
+            ),
+        ),
+        state=Survay.question9,
+        getter=survay_question9
+    ),
+    Window(
+        Format('{question10}'),
+        Group(
+            Row(
+                Button(
+                    Format(text='{btn_yes}'),
+                    id='a',
+                    on_click=answer_quest10
+                ),
+                Button(
+                    Format(text='{btn_no}'),
+                    id='b',
+                    on_click=answer_quest10
+                ),
+            ),
+            # Добавить другую кнопку назад в зависимости от того нажиммал пользователь кнопки с somke или hobl
+            Column(
+                Back(
+                    Const('◀️ Назад'),
+                    id='back_to_7',
+                ),
+            ),
+        ),
+        state=Survay.question10,
+        getter=survay_question10
+    ),
+    Window(
+        Format('{question11}'),
+        Group(
+            Row(
+                Button(
+                    Format(text='{btn_yes}'),
+                    id='a',
+                    on_click=answer_quest11
+                ),
+                Button(
+                    Format(text='{btn_no}'),
+                    id='b',
+                    on_click=answer_quest11
+                ),
+            ),
+            Column(
+                Back(
+                    Const('◀️ Назад'),
+                    id='back',
+                ),
+            ),
+        ),
+        state=Survay.question11,
+        getter=survay_question11
+    ),
+    Window(
+        Format('{question12}'),
+        MessageInput(
+            func=answer_quest12,
+            content_types=ContentType.TEXT
+        ),
+
+        Column(
+            Back(
+                Const('◀️ Назад'),
+                id='back',
+            ),
+        ),
+        state=Survay.question12,
+        getter=survay_question12
+    ),
+    Window(
+        Format('{question13}'),
+        Group(
+            Row(
+                Button(
+                    Format(text='{btn_yes}'),
+                    id='a',
+                    on_click=answer_quest13
+                ),
+                Button(
+                    Format(text='{btn_no}'),
+                    id='b',
+                    on_click=answer_quest13
+                ),
+            ),
+            Column(
+                Back(
+                    Const('◀️ Назад'),
+                    id='back',
+                ),
+            ),
+        ),
+        state=Survay.question13,
+        getter=survay_question13
+    ),
+    Window(
+        Format('{question14}'),
+        Group(
+            Row(
+                Button(
+                    Format(text='{btn_yes}'),
+                    id='a',
+                    on_click=answer_quest14
+                ),
+                Button(
+                    Format(text='{btn_no}'),
+                    id='b',
+                    on_click=answer_quest14
+                ),
+            ),
+            Column(
+                Back(
+                    Const('◀️ Назад'),
+                    id='back',
+                ),
+            ),
+        ),
+        state=Survay.question14,
+        getter=survay_question14
+    ),
+    Window(
+        Format('{imt_height}'),
+        MessageInput(
+            func=answer_imt_height,
+            content_types=ContentType.TEXT
+        ),
+
+        Column(
+            Back(
+                Const('◀️ Назад'),
+                id='back',
+            ),
+        ),
+        state=Survay.imt_height,
+        getter=imt
+    ),
+    Window(
+        Format('{imt_weight}'),
+        MessageInput(
+            func=answer_imt_weight,
+            content_types=ContentType.TEXT
+        ),
+        Column(
+            Back(
+                Const('◀️ Назад'),
+                id='back',
+            ),
+        ),
+        state=Survay.imt_weight,
+        getter=imt
+    ),
+    Window(
+        Format('{wash}'),
+        StaticMedia(
+            path='tgbot\media\emoji_pick.jpg',
+            type=ContentType.PHOTO
+        ),
+        MessageInput(
+            func=answer_pain_scale,
+            content_types=ContentType.TEXT
+        ),
+        Column(
+            Back(
+                Const('◀️ Назад'),
+                id='back',
+            ),
+        ),
+        getter=wash,
+        state=Survay.wash
+    ),
+    Window(
+        Format('{self_assessment}'),
+        StaticMedia(
+            path='tgbot\media\\assessment.jpg',
+            type=ContentType.PHOTO
+        ),
+        MessageInput(
+            func=answer_assessment,
+            content_types=ContentType.TEXT
+        ),
+        Column(
+            Cancel(
+                Const('◀️ Назад'),
+                id='back',
+            ),
+        ),
+        getter=self_assessment,
+        state=Survay.self_assessment
+    ),
+    Window(
+        Format('{response_text}'),
+        Group(
+            Column(
+                Url(
+                    Format(text='{url_button}'),
+                    url=Const('https://kwork.ru/seller'),
+                    id='go_to_doctor'
+                )
+            ),
+            Column(
+                Cancel(
+                    Const('◀️ Главное меню'),
+                    id='back_to_main',
+                ),
+            ),
+        ),
+        getter=get_result,
+        state=Survay.survay_result
+    ),
+)
