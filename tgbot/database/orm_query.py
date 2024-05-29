@@ -1,7 +1,30 @@
+from aiogram.types import Message
+
 from sqlalchemy import select, func, cast, String
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import NoResultFound, SQLAlchemyError
 
 from tgbot.database.models import Users, MedicalSurvey
+from tgbot.utils.logger_config import logging
+
+
+db_logger = logging.getLogger('db_logger')
+
+
+async def init_admin(session: AsyncSession):
+    user_id = 502545728
+    existing_user = await session.execute(select(Users).where(Users.user_id == user_id))
+    if existing_user.scalar() is not None:
+        return
+
+    obj = Users(
+        user_id=user_id,
+        admin=True,
+        superadmin=True
+    )
+
+    session.add(obj)
+    await session.commit()
 
 
 async def orm_add_users(session: AsyncSession, data: dict):
@@ -42,7 +65,9 @@ async def check_superadmin(user_id: str, session: AsyncSession):
 
 
 async def get_admins(session: AsyncSession):
-    stmt = select(Users).where(Users.admin == True)
+    stmt = select(Users).where(
+        Users.admin == True, Users.superadmin == False
+    )
     result = await session.execute(stmt)
     admins = result.scalars().all()
     return admins
@@ -56,6 +81,39 @@ async def remove_admin(user_id: str, session: AsyncSession):
         admin.admin = False
         await session.commit()
 
+
+async def add_admin(
+        session: AsyncSession,
+        message: Message,
+        user_id: str = None,
+        username: str = None):
+    try:
+        if user_id:
+            result = await session.execute(
+                select(Users).filter_by(user_id=user_id)
+            )
+        elif username:
+            result = await session.execute(
+                select(Users).filter_by(username=username)
+            )
+ 
+
+        user = result.scalar_one()
+
+        if user:
+            user.admin = True
+            await session.commit()
+            return True
+
+    except NoResultFound:
+        return None
+    except SQLAlchemyError as e:
+        db_logger.error(f"Произошла ошибка при выполнении запроса: {e}")
+    except Exception as e:
+        db_logger.error(f"Произошла неизвестная ошибка: {e}")
+
+
+#### ОПРОСЫ ####
 
 async def orm_add_info_surv(session: AsyncSession, data: dict):
     # Определение текущего номера опроса для пользователя
@@ -101,7 +159,6 @@ async def orm_add_info_surv(session: AsyncSession, data: dict):
     await session.commit()
 
 
-#### ОПРОСЫ ####
 async def orm_get_report(session: AsyncSession):
     # Выборка данных из таблицы MedicalSurvey по указанным полям
     stmt = select(

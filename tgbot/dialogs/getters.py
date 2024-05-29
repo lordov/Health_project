@@ -15,7 +15,7 @@ from tgbot.database.orm_query import check_admin, check_superadmin
 
 async def is_superadmin(dialog_manager: DialogManager, event_from_user: User, **kwargs):
     session = dialog_manager.middleware_data.get('session')
-    is_super = await check_admin(event_from_user.id, session)
+    is_super = await check_superadmin(event_from_user.id, session)
     return {'is_super': is_super}
 
 

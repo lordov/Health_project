@@ -4,7 +4,7 @@ from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery
 
-from aiogram_dialog import DialogManager, StartMode
+from aiogram_dialog import DialogManager, StartMode, ShowMode
 
 from tgbot.database.orm_query import check_superadmin, get_admins, orm_add_users, remove_admin
 from tgbot.dialogs.states import Menu, AdminPanel
@@ -31,24 +31,23 @@ async def command_start_process(message: Message, dialog_manager: DialogManager,
 @start_router.message(Command('admin'))
 async def start_admin_dialog(message: Message, dialog_manager: DialogManager):
     chat_id = message.from_user.id
-    if await check_superadmin(chat_id):
-        await dialog_manager.start(state=AdminPanel.start)
-
-
-async def callback_delete_admin(callback: CallbackQuery, dialog_manager: DialogManager):
-    session: AsyncSession = dialog_manager.middleware_data.get('session')
-    user_id = callback.data.split(':')[1]
-    await remove_admin(user_id, session)
-    await callback.message.answer('Пользователь был успешно удален из администраторов.')
-    await callback.answer()
+    session = dialog_manager.middleware_data.get('session')
+    if await check_superadmin(chat_id, session):
+        await dialog_manager.start(state=AdminPanel.start, show_mode=ShowMode.SEND)
 
 
 @start_router.callback_query(F.data.startswith('delete_admin:'))
-async def callback_delete_admin(callback: CallbackQuery, session: AsyncSession, dialog_manager: DialogManager):
+async def callback_delete_admin(
+    callback: CallbackQuery,
+    session: AsyncSession,
+    dialog_manager: DialogManager
+):
     user_id = callback.data.split(':')[-1]
     await remove_admin(user_id, session)
+
     admins_db = await get_admins(session)
     keyboard = admin_list(admins_db)
+
     await callback.message.edit_text(
-        f'Пользователь {user_id} был успешно удален из администраторов.', reply_markup=keyboard)
+        f'Пользователь <b>{user_id}</b> был успешно удален из администраторов.', reply_markup=keyboard)
     await callback.answer()

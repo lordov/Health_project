@@ -9,3 +9,6 @@
 *__pycache__
 
 *rabbitmq_data
+
+# No db
+*.db
