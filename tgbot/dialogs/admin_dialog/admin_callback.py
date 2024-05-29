@@ -2,8 +2,6 @@ from aiogram.types import CallbackQuery, Message
 from aiogram_dialog.widgets.kbd import Button
 from aiogram_dialog import DialogManager
 
-from sqlalchemy.exc import NoResultFound, MultipleResultsFound, SQLAlchemyError
-
 from tgbot.utils.download import download_xlsx
 from tgbot.database.orm_query import add_admin, get_admins
 from tgbot.kbd.keyboards import admin_list
@@ -50,7 +48,7 @@ async def add_admin_input(message: Message, button: Button, dialog_manager: Dial
     if result is None:
         await message.answer(f'Пользователь <b>{message_text}</b> не найден.')
         return
-    
+
     await message.answer(f'Пользователь <b>{message_text}</b> был успешно добавлен в администраторы.')
 
     await dialog_manager.back()

@@ -12,7 +12,8 @@ db_logger = logging.getLogger('db_logger')
 
 
 async def init_admin(session: AsyncSession):
-    user_id = 502545728
+    # для суперадмина
+    user_id = 5142861584
     existing_user = await session.execute(select(Users).where(Users.user_id == user_id))
     if existing_user.scalar() is not None:
         return
@@ -96,7 +97,6 @@ async def add_admin(
             result = await session.execute(
                 select(Users).filter_by(username=username)
             )
- 
 
         user = result.scalar_one()
 

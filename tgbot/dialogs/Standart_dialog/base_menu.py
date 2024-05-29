@@ -24,7 +24,7 @@ start_dialog = Dialog(
             Column(
                 Url(
                     Format(text='{url_button}'),
-                    url=Const('https://kwork.ru/seller'),
+                    url=Const('https://www.gosuslugi.ru/10700/'),
                     id='go_to_doctor'
                 )
             )
