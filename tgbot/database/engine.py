@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from tgbot.database.models import Base
 from tgbot.database.orm_query import init_admin
-from tgbot.constants import DB_URL, DB_LITE
+from tgbot.config import DB_URL, DB_LITE
 
 
 engine = create_async_engine(DB_LITE, echo=True)
